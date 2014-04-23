@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ECGDisplay</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_welcome">Welcome</string>
+    <string name="title_activity_display_sd_file">SD File</string>
+    <string name="button_text_show_sdfile">Show me archived heart activity!</string>
+    <string name="button_text_show_sensor">Show me real-time heart activity!</string>
+    <string name="title_activity_bluetooth">Sensor</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_mpdfademo">Demo</string>
+    <string name="button_demo">Demo of the algorithm</string>
+
+</resources>

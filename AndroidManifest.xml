@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cmu.ece.BaihuQian.ECGDisplayUI"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="cmu.ece.BaihuQian.ECGDisplayUI.DisplaySDFileActivity"
+            android:label="@string/title_activity_display_sd_file"
+            android:screenOrientation="landscape" >
+        </activity>
+        <activity
+            android:name="cmu.ece.BaihuQian.ECGDisplayUI.WelcomeActivity"
+            android:label="@string/title_activity_welcome"
+            android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="cmu.ece.BaihuQian.ECGDisplayUI.BluetoothActivity"
+            android:label="@string/title_activity_bluetooth" >
+        </activity>
+        <activity
+            android:name="cmu.ece.BaihuQian.ECGDisplayUI.MPDFADemoActivity"
+            android:label="@string/title_activity_mpdfademo" 
+            android:screenOrientation="landscape">
+        </activity>
+    </application>
+
+</manifest>

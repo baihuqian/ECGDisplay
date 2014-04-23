@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cmu.ece.BaihuQian.ECGDisplayUI.WelcomeActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <Button
+        android:id="@+id/buttonShowSDFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/button_text_show_sdfile" />
+
+    <Button
+        android:id="@+id/buttonShowSensor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonShowSDFile"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp"
+        android:text="@string/button_text_show_sensor" />
+
+    <Button
+        android:id="@+id/buttonDemo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonShowSensor"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="37dp"
+        android:text="@string/button_demo" />
+
+</RelativeLayout>
