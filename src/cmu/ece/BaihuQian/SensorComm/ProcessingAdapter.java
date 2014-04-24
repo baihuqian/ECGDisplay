@@ -15,7 +15,7 @@ public class ProcessingAdapter extends Thread{
 		readIndex = 0;
 	}
 	
-	public void run() {
+	public synchronized void run() {
 		while(!Thread.interrupted() && !needToStop) {
 			int numSampleReady;
 			double filDataOut;
@@ -32,7 +32,7 @@ public class ProcessingAdapter extends Thread{
 		}
 	}
 	
-	public int numSamplesReady()
+	public synchronized int numSamplesReady()
 	{
 		if( (writeIndex - readIndex) >= 0)
 		{
@@ -41,6 +41,54 @@ public class ProcessingAdapter extends Thread{
 		else
 		{
 			return (DATABUFFERSIZE - readIndex + writeIndex);
+		}
+	}
+
+	public synchronized double[] readDataBuffer() {
+		int numSamplesReady = numSamplesReady();
+		if(numSamplesReady > 0) {
+			double [] returnValue = new double [numSamplesReady];
+			if(readIndex + numSamplesReady <= DATABUFFERSIZE) {
+				System.arraycopy(dataBuffer, readIndex, returnValue, 0, numSamplesReady);
+				
+			}
+			else {
+				int firstPart = DATABUFFERSIZE - readIndex;
+				System.arraycopy(dataBuffer, readIndex, returnValue, 0, firstPart);
+				System.arraycopy(dataBuffer, 0, returnValue, firstPart, numSamplesReady - firstPart);
+			}
+			readIndex += numSamplesReady;
+			if(readIndex >= DATABUFFERSIZE) {
+				readIndex -= DATABUFFERSIZE;
+			}
+			return returnValue;
+		}
+		else {
+			return null;
+		}
+	}
+	
+	public synchronized double[] readDataBuffer(int size) {
+		int numSamplesReady = numSamplesReady();
+		if(numSamplesReady >= size) {
+			double [] returnValue = new double [size];
+			if(readIndex + size <= DATABUFFERSIZE) {
+				System.arraycopy(dataBuffer, readIndex, returnValue, 0, size);
+				
+			}
+			else {
+				int firstPart = DATABUFFERSIZE - readIndex;
+				System.arraycopy(dataBuffer, readIndex, returnValue, 0, firstPart);
+				System.arraycopy(dataBuffer, 0, returnValue, firstPart, size - firstPart);
+			}
+			readIndex += size;
+			if(readIndex >= DATABUFFERSIZE) {
+				readIndex -= DATABUFFERSIZE;
+			}
+			return returnValue;
+		}
+		else {
+			return null;
 		}
 	}
 }

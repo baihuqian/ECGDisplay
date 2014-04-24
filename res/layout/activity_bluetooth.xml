@@ -4,5 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="cmu.ece.BaihuQian.ECGDisplayUI.BluetoothActivity"
-    tools:ignore="MergeRootFrame" />
+    tools:ignore="MergeRootFrame" >
 
+    <LinearLayout
+        android:id="@+id/BTgraph"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+    </LinearLayout>
+
+</FrameLayout>

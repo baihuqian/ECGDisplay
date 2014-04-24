@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothSocket;
 public class ConnectBTSensor extends Thread {
 	private BluetoothDevice sensor;
 	private BluetoothSocket incomingSocket;
+	private ProcessingAdapter adapter;
 	private static final UUID mUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 	public ConnectBTSensor(BluetoothDevice sensor) {
 		BluetoothSocket tmp = null;
@@ -32,7 +33,7 @@ public class ConnectBTSensor extends Thread {
 			return;
 		}
 		ManageBTConnection manager = new ManageBTConnection(incomingSocket);
-		ProcessingAdapter adapter = new ProcessingAdapter(manager.getBuffer());
+		adapter = new ProcessingAdapter(manager.getBuffer());
 		manager.start();
 		adapter.start();
 	}
@@ -44,6 +45,8 @@ public class ConnectBTSensor extends Thread {
 			
 		}
 	}
-	
+	public ProcessingAdapter getAdapter() {
+		return adapter;
+	}
 	
 }
