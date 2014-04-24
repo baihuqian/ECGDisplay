@@ -6,7 +6,7 @@ import java.io.OutputStream;
 
 import android.bluetooth.BluetoothSocket;
 
-// all processing goes here
+// all BT processing goes here
 public class ManageBTConnection extends Thread {
 
 
@@ -31,8 +31,8 @@ public class ManageBTConnection extends Thread {
 		OutputStream tmpOut = null;
 
 		try {
-			tmpIn = socket.getInputStream();
-			tmpOut = socket.getOutputStream();
+			tmpIn = this.socket.getInputStream();
+			tmpOut = this.socket.getOutputStream();
 		} catch (IOException e) {
 
 		}
@@ -50,7 +50,7 @@ public class ManageBTConnection extends Thread {
 			}
 			byteBufferIndex = 0;
 		}
-		return (byteBuffer[byteBufferIndex++]&0xFF);
+		return (byteBuffer[byteBufferIndex++]&0xFF); // convert to unsigned int
 	}
 
 	public int writeByte(byte[] data) throws IOException {
@@ -81,7 +81,7 @@ public class ManageBTConnection extends Thread {
 
 				double newSamples = (double) temp;
 
-				for(int i = 0; i < 4; i++) { // ignore 4 tail bytes
+				for(int i = 0; i < 10; i++) { // ignore two other channels and 4 tail bytes (2 * 3 + 4 = 10)
 					readByte();
 				}
 				//write to buffer

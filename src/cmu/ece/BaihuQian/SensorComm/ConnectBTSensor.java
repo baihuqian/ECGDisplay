@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-
+// all BT connection goes here
 public class ConnectBTSensor extends Thread {
 	private BluetoothDevice sensor;
 	private BluetoothSocket incomingSocket;
@@ -15,7 +15,7 @@ public class ConnectBTSensor extends Thread {
 		this.sensor = sensor;
 		
 		try {
-			tmp = sensor.createInsecureRfcommSocketToServiceRecord(mUUID);
+			tmp = this.sensor.createInsecureRfcommSocketToServiceRecord(mUUID);
 		} catch(Exception e) {
 		
 		}
@@ -35,7 +35,6 @@ public class ConnectBTSensor extends Thread {
 		ManageBTConnection manager = new ManageBTConnection(incomingSocket);
 		adapter = new ProcessingAdapter(manager.getBuffer());
 		manager.start();
-		adapter.start();
 	}
 	
 	public void cancel() {

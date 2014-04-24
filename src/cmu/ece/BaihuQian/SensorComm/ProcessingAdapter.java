@@ -1,20 +1,20 @@
 package cmu.ece.BaihuQian.SensorComm;
 
-public class ProcessingAdapter extends Thread{
+public class ProcessingAdapter{
 	private BTBuffer buffer;
-	private double [] dataBuffer;
-	private static final int DATABUFFERSIZE = 10000;
-	private boolean needToStop;
-	private int writeIndex, readIndex;
+	//private double [] dataBuffer;
+	//private static final int DATABUFFERSIZE = 10000;
+	//private boolean needToStop;
+	//private int writeIndex, readIndex;
 	
 	public ProcessingAdapter(BTBuffer buffer) {
 		this.buffer = buffer;
-		needToStop = false;
-		dataBuffer = new double [DATABUFFERSIZE];
-		writeIndex = 0;
-		readIndex = 0;
+		//needToStop = false;
+		//dataBuffer = new double [DATABUFFERSIZE];
+		//writeIndex = 0;
+		//readIndex = 0;
 	}
-	
+	/*
 	public void run() {
 		while(!Thread.interrupted() && !needToStop) {
 			int numSampleReady;
@@ -32,35 +32,18 @@ public class ProcessingAdapter extends Thread{
 			
 		}
 	}
-	
-	public synchronized int numSamplesReady()
+	*/
+	public int numSamplesReady()
 	{
-		if( (writeIndex - readIndex) >= 0)
-		{
-			return writeIndex - readIndex;
-		}
-		else
-		{
-			return (DATABUFFERSIZE - readIndex + writeIndex);
-		}
+		return buffer.numSamplesReady();
 	}
 
 	public synchronized double[] readDataBuffer() {
 		int numSamplesReady = numSamplesReady();
 		if(numSamplesReady > 0) {
 			double [] returnValue = new double [numSamplesReady];
-			if(readIndex + numSamplesReady <= DATABUFFERSIZE) {
-				System.arraycopy(dataBuffer, readIndex, returnValue, 0, numSamplesReady);
-				
-			}
-			else {
-				int firstPart = DATABUFFERSIZE - readIndex;
-				System.arraycopy(dataBuffer, readIndex, returnValue, 0, firstPart);
-				System.arraycopy(dataBuffer, 0, returnValue, firstPart, numSamplesReady - firstPart);
-			}
-			readIndex += numSamplesReady;
-			if(readIndex >= DATABUFFERSIZE) {
-				readIndex -= DATABUFFERSIZE;
+			for(int i = 0; i < numSamplesReady; i++) {
+				returnValue[i] = buffer.readSamples();
 			}
 			return returnValue;
 		}
@@ -73,18 +56,8 @@ public class ProcessingAdapter extends Thread{
 		int numSamplesReady = numSamplesReady();
 		if(numSamplesReady >= size) {
 			double [] returnValue = new double [size];
-			if(readIndex + size <= DATABUFFERSIZE) {
-				System.arraycopy(dataBuffer, readIndex, returnValue, 0, size);
-				
-			}
-			else {
-				int firstPart = DATABUFFERSIZE - readIndex;
-				System.arraycopy(dataBuffer, readIndex, returnValue, 0, firstPart);
-				System.arraycopy(dataBuffer, 0, returnValue, firstPart, size - firstPart);
-			}
-			readIndex += size;
-			if(readIndex >= DATABUFFERSIZE) {
-				readIndex -= DATABUFFERSIZE;
+			for(int i = 0; i < size; i++) {
+				returnValue[i] = buffer.readSamples();
 			}
 			return returnValue;
 		}

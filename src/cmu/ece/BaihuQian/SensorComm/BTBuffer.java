@@ -1,7 +1,7 @@
 package cmu.ece.BaihuQian.SensorComm;
 
 public class BTBuffer implements SensorCommConstants{
-	private static final int BUFLEN = 5000;
+	private static final int BUFLEN = 50000;
 
 	//filter parameters and sample rate
 	protected double HPFreq;
@@ -150,19 +150,9 @@ public class BTBuffer implements SensorCommConstants{
 	
 	public synchronized void readSamples(double rawDataOut, double filDataOut, double impDataOut, int[] triggerDataOut, int[] packetDataOut)
 	{
-
-
-
 		rawDataOut = rawData[readIndex];
-
-
-
 		filDataOut = filData[readIndex];
-
-
 		impDataOut = impData[readIndex];
-
-
 
 		if(triggerDataOut!=null)
 		{triggerDataOut[0] = triggerData[readIndex];}

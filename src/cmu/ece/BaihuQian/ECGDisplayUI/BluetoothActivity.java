@@ -19,30 +19,36 @@ import cmu.ece.BaihuQian.SensorComm.ConnectBTSensor;
 import cmu.ece.BaihuQian.SensorComm.ProcessingAdapter;
 
 public class BluetoothActivity extends Activity {
+	// Bluetooth related variables
 	private BluetoothAdapter btAdapter;
 	private BluetoothDevice sensor;
 	private static final String SENSOR_NAME = "Cog-Dev-3 160";
+	private ProcessingAdapter adapter = null;
+	private ConnectBTSensor conn;
 	
+	// GraphView related variables
 	private GraphViewSeries graphViewSeries;
 	private GraphView graphView;
 	private GraphViewData [] graphViewData;
 	
+	// real-time update
 	private final static int ORIGINAL_SAMPLE_RATE = 500; // original sampling rate
 	private final static int DOWN_SAMPLE = 5; // down sample factor
 	private final static int WINDOW_WIDTH = 10; // display window width in seconds
 	private final static double UPDATE_FREQ = 1; // update frequency in seconds
+	private int sample_rate;
+	private int dataLength;
 	private Runnable add_data;
 	private Handler mHandler;
 	private boolean updateFlag = true;
 	private double current_time = 0;
-	private ProcessingAdapter adapter = null;
-	private ConnectBTSensor conn;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_bluetooth);
-		mHandler = new Handler();
+		
 		btAdapter = BluetoothAdapter.getDefaultAdapter();
 		if(btAdapter != null) {
 			if(!btAdapter.isEnabled()) {
@@ -64,10 +70,14 @@ public class BluetoothActivity extends Activity {
 			}
 			
 			
+			mHandler = new Handler();
+			sample_rate = ORIGINAL_SAMPLE_RATE / DOWN_SAMPLE;
+			dataLength = sample_rate * WINDOW_WIDTH;
+			graphViewData = new GraphViewData[dataLength];
+			for(int i = 0; i < graphViewData.length; i++) {
+				graphViewData[i] = new GraphViewData((double)(i)/(double)(sample_rate), 0);
+			}
 			
-			int sample_rate = ORIGINAL_SAMPLE_RATE / DOWN_SAMPLE;
-			graphViewData = new GraphViewData[1];
-			graphViewData[0] = new GraphViewData(0, 0);
 			graphViewSeries = new GraphViewSeries(graphViewData);
 			graphView = new LineGraphView(this, "ECG");
 			graphView.addSeries(graphViewSeries);
@@ -100,6 +110,7 @@ public class BluetoothActivity extends Activity {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
+				
 				if(updateFlag == false) {
 					updateFlag = true;
 				}
@@ -108,17 +119,26 @@ public class BluetoothActivity extends Activity {
 						adapter = conn.getAdapter();
 					}
 					if(adapter != null) {
-						int dataLength = (int)(ORIGINAL_SAMPLE_RATE * UPDATE_FREQ);
-						double [] displayValue = adapter.readDataBuffer(dataLength);
+						int newDataLength = (int)(sample_rate * UPDATE_FREQ);
+						double [] displayValue = adapter.readDataBuffer((int)(ORIGINAL_SAMPLE_RATE * UPDATE_FREQ));
 						if(displayValue != null) {
+							
 							GraphViewData [] displayData = new GraphViewData [dataLength];
-							for(int i = 0; i < dataLength; i++) {
-								double time = current_time + (double)i / (double)ORIGINAL_SAMPLE_RATE;
-								displayData[i] = new GraphViewData(time, displayValue[i]);
+							int offset = dataLength - newDataLength;
+							for(int i = 0; i < offset; i++) {
+								displayData[i] = graphViewData[i + newDataLength];
+							}
+							
+							double time = current_time;
+							double update_interval = 1.0 / (double)sample_rate;
+							for(int i = 0; i < newDataLength; i++) {
+								displayData[i + offset] = new GraphViewData(time, displayValue[i * DOWN_SAMPLE]);
+								time += update_interval;
 							}
 							graphViewSeries.resetData(graphViewData); // feed new data to the data series
 							graphView.scrollToEnd(); // scroll to end to animate updating
 							current_time += UPDATE_FREQ;
+							graphViewData = displayData;
 						}
 						
 					}
