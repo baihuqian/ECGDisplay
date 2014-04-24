@@ -15,16 +15,17 @@ public class ProcessingAdapter extends Thread{
 		readIndex = 0;
 	}
 	
-	public synchronized void run() {
+	public void run() {
 		while(!Thread.interrupted() && !needToStop) {
 			int numSampleReady;
 			double filDataOut;
-			while((numSampleReady = buffer.numSamplesReady()) <= 0) {} // wait until samples are ready
-			for(int i = 0; i < numSampleReady; i++) { // read samples
-				filDataOut = buffer.readSamples();
-				dataBuffer[writeIndex++] = filDataOut;
-				if(writeIndex >= DATABUFFERSIZE) {
-					writeIndex = 0;
+			if((numSampleReady = buffer.numSamplesReady()) > 0) { // wait until samples are ready
+				for(int i = 0; i < numSampleReady; i++) { // read samples
+					filDataOut = buffer.readSamples();
+					dataBuffer[writeIndex++] = filDataOut;
+					if(writeIndex >= DATABUFFERSIZE) {
+						writeIndex = 0;
+					}
 				}
 			}
 			

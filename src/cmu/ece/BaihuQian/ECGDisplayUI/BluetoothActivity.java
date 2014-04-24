@@ -33,7 +33,7 @@ public class BluetoothActivity extends Activity {
 	private final static double UPDATE_FREQ = 1; // update frequency in seconds
 	private Runnable add_data;
 	private Handler mHandler;
-	private boolean updateFlag = false;
+	private boolean updateFlag = true;
 	private double current_time = 0;
 	private ProcessingAdapter adapter = null;
 	private ConnectBTSensor conn;
