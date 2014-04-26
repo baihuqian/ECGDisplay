@@ -35,10 +35,11 @@ public class ProcessingAdapter{
 	*/
 	public int numSamplesReady()
 	{
+		//return 1000;
 		return buffer.numSamplesReady();
 	}
 
-	public synchronized double[] readDataBuffer() {
+	public double[] readDataBuffer() {
 		int numSamplesReady = numSamplesReady();
 		if(numSamplesReady > 0) {
 			double [] returnValue = new double [numSamplesReady];
@@ -52,7 +53,7 @@ public class ProcessingAdapter{
 		}
 	}
 	
-	public synchronized double[] readDataBuffer(int size) {
+	public double[] readDataBuffer(int size) {
 		int numSamplesReady = numSamplesReady();
 		if(numSamplesReady >= size) {
 			double [] returnValue = new double [size];

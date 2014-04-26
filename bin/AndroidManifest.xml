@@ -34,7 +34,8 @@
         </activity>
         <activity
             android:name="cmu.ece.BaihuQian.ECGDisplayUI.BluetoothActivity"
-            android:label="@string/title_activity_bluetooth" >
+            android:label="@string/title_activity_bluetooth" 
+            android:screenOrientation="landscape">
         </activity>
         <activity
             android:name="cmu.ece.BaihuQian.ECGDisplayUI.MPDFADemoActivity"

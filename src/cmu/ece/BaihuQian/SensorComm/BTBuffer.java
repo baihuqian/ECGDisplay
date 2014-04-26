@@ -1,5 +1,7 @@
 package cmu.ece.BaihuQian.SensorComm;
 
+import java.util.concurrent.ArrayBlockingQueue;
+
 public class BTBuffer implements SensorCommConstants{
 	private static final int BUFLEN = 50000;
 
@@ -17,15 +19,15 @@ public class BTBuffer implements SensorCommConstants{
 	protected boolean impCheckOn;
 
 	//memory buffers for data
-	private double[] rawData; //raw data
-	private double[] rawDataImpFil; //raw data plus notch
+	//private double[] rawData; //raw data
+	//private double[] rawDataImpFil; //raw data plus notch
 	private double[] filData; //hpf for display
-
+	//private ArrayBlockingQueue<Double> filData;
 	private double[] last4Samples;
-	private double[] impData;
+	//private double[] impData;
 
-	private int[] packetCounter;
-	private int[] triggerData;
+	//private int[] packetCounter;
+	//private int[] triggerData;
 
 	//pointers for circular buffers
 	private volatile int readIndex;
@@ -47,18 +49,19 @@ public class BTBuffer implements SensorCommConstants{
 
 	public BTBuffer() {
 		//init buffer arrays
-		rawData = new double[BUFLEN];
+		//rawData = new double[BUFLEN];
+		//filData = new ArrayBlockingQueue<Double>(BUFLEN);
 		filData = new double[BUFLEN];
 		last4Samples = new double[4];
-		impData = new double[BUFLEN];
-		rawDataImpFil = new double[BUFLEN];
+		//impData = new double[BUFLEN];
+		//rawDataImpFil = new double[BUFLEN];
 
 		//inital indicies
 		readIndex = 0;
 		writeIndex = 0;
 
-		packetCounter = new int[BUFLEN];
-		triggerData = new int[BUFLEN];
+		//packetCounter = new int[BUFLEN];
+		//triggerData = new int[BUFLEN];
 
 		//init device parameters
 		HPFreq = 0.5;
@@ -86,6 +89,7 @@ public class BTBuffer implements SensorCommConstants{
 		}
 	}
 
+
 	public synchronized void writeSamples(double newData, int pCounter, int trigger)
 	{
 		/*
@@ -103,24 +107,24 @@ public class BTBuffer implements SensorCommConstants{
 		 */
 
 		//write packet counter and trigger
-		packetCounter[writeIndex] = pCounter;
-		triggerData[writeIndex] = trigger;
+		//packetCounter[writeIndex] = pCounter;
+		//triggerData[writeIndex] = trigger;
 
 
 
 		//save the raw data
-		rawData[writeIndex] = (newData*ADC_TO_VOLTS);
-
+		//rawData[writeIndex] = (newData*ADC_TO_VOLTS);
+		double rawData = (newData*ADC_TO_VOLTS);
 		//remove impedance stimuli
 		//push old data out and add latest data point to the 4 point buffer
 		last4Samples[0] = last4Samples[1];
 		last4Samples[1] = last4Samples[2];
 		last4Samples[2] = last4Samples[3];
-		last4Samples[3] = rawData[writeIndex];
-
+		//last4Samples[3] = rawData[writeIndex];
+		last4Samples[3] = rawData;
 		//save data with impedance stimuli gone
 		//two stage process, IIR notch at fs/4, and FIR average two point   
-		rawDataImpFil[writeIndex] = lpf(notchf(rawData[writeIndex]));
+		//rawDataImpFil[writeIndex] = lpf(notchf(rawData[writeIndex]));
 
 		//compute impedance and save into impedance buffer
 		double diff1, diff2;
@@ -128,17 +132,12 @@ public class BTBuffer implements SensorCommConstants{
 		diff2 = Math.abs(last4Samples[2]-last4Samples[0]);
 		if(diff2>diff1)
 		{diff1 = diff2;}
-		impData[writeIndex] = diff1*TO_Z;
+		//impData[writeIndex] = diff1*TO_Z;
 
 		//perform high-pass filtering
-		if(impCheckOn)
-		{
-			filData[writeIndex] = hpf(rawDataImpFil[writeIndex]);
-		}
-		else
-		{
-			filData[writeIndex] = hpf(rawData[writeIndex]);
-		}
+
+		filData[writeIndex] = hpf(rawData);
+		
 
 
 		writeIndex++;
@@ -148,27 +147,10 @@ public class BTBuffer implements SensorCommConstants{
 		}
 	}
 	
-	public synchronized void readSamples(double rawDataOut, double filDataOut, double impDataOut, int[] triggerDataOut, int[] packetDataOut)
-	{
-		rawDataOut = rawData[readIndex];
-		filDataOut = filData[readIndex];
-		impDataOut = impData[readIndex];
-
-		if(triggerDataOut!=null)
-		{triggerDataOut[0] = triggerData[readIndex];}
-
-		if(packetDataOut!=null)
-		{packetDataOut[0] = packetCounter[readIndex];}
-
-		readIndex++;
-		if(readIndex>=BUFLEN)
-		{
-			readIndex=0;
-		}
-
-	}
+	
 	public synchronized double readSamples() {
 		double filDataOut = filData[readIndex];
+		
 		readIndex++;
 		if(readIndex >= BUFLEN) {
 			readIndex = 0;
@@ -179,26 +161,7 @@ public class BTBuffer implements SensorCommConstants{
     /*
      * Reads out impedance values, averaged by the specified number of samples
      */
-	public synchronized void readImp(double impDataOut, int samplesToAverage)
-	{
-		double impDataTemp = 0;
-
-		int tempIndex = readIndex;
-
-		for(int j=0; j<samplesToAverage; j++)
-		{
-
-			impDataTemp += impData[tempIndex]/((double)samplesToAverage);
-
-
-			tempIndex--;
-			if(tempIndex<0)
-			{
-				tempIndex = BUFLEN-1;
-			}
-		}
-		impDataOut = impDataTemp;
-	}
+	
     
     /*
      * Updates high pass filter with newSample, updates state variables and returns

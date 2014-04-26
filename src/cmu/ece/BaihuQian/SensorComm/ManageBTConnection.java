@@ -38,6 +38,7 @@ public class ManageBTConnection extends Thread {
 		}
 		inStream = tmpIn;
 		outStream = tmpOut;
+		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 	}
 
 	public int readByte() throws IOException{

@@ -69,7 +69,7 @@ public class DisplaySDFileActivity extends Activity {
 			graphView.setScrollable(true);
 			graphView.setScalable(true);
 			graphView.setManualYAxisBounds(5, -1);
-			graphView.scrollToEnd();
+			//graphView.scrollToEnd();
 			LinearLayout graph = (LinearLayout) findViewById(R.id.SDgraph);
 			graph.addView(graphView);
 		}
