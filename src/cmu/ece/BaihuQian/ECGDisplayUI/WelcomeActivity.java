@@ -13,6 +13,7 @@ public class WelcomeActivity extends Activity {
 	private Button buttonSDFile;
 	private Button buttonBluetooth;
 	private Button buttonDemo;
+	private Button buttonUserActivity;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -23,6 +24,8 @@ public class WelcomeActivity extends Activity {
 		buttonBluetooth.setOnClickListener(buttonBluetoothListener);
 		buttonDemo = (Button) findViewById(R.id.buttonDemo);
 		buttonDemo.setOnClickListener(buttonDemoListener);
+		buttonUserActivity = (Button) findViewById(R.id.buttonUserActivity);
+		buttonUserActivity.setOnClickListener(buttonUserAcitivityListener);
 		
 	}
 	private OnClickListener buttonSDFileListener = new OnClickListener() {
@@ -53,6 +56,17 @@ public class WelcomeActivity extends Activity {
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			Intent intent = new Intent(WelcomeActivity.this, MPDFADemoActivity.class);
+			startActivity(intent);
+		}
+		
+	};
+	
+	private OnClickListener buttonUserAcitivityListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			Intent intent = new Intent(WelcomeActivity.this, UserBehaviorActivity.class);
 			startActivity(intent);
 		}
 		

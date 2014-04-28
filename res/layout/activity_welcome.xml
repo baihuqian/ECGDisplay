@@ -19,9 +19,9 @@
         android:id="@+id/buttonShowSensor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/buttonShowSDFile"
         android:layout_below="@+id/buttonShowSDFile"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="22dp"
         android:text="@string/button_text_show_sensor" />
 
     <Button
@@ -30,7 +30,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/buttonShowSensor"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="37dp"
+        android:layout_marginTop="13dp"
         android:text="@string/button_demo" />
+
+    <Button
+        android:id="@+id/buttonUserActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonDemo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="19dp"
+        android:text="User Activity" />
 
 </RelativeLayout>

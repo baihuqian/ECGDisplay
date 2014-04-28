@@ -11,5 +11,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_mpdfademo">Demo</string>
     <string name="button_demo">Demo of the algorithm</string>
+    <string name="title_activity_user_behavior">UserBehavior</string>
 
 </resources>
