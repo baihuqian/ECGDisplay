@@ -65,7 +65,7 @@ public class DisplaySDFileActivity extends Activity {
 			graphViewSeries = new GraphViewSeries(graphViewData);
 			graphView = new LineGraphView(this, "ECG");
 			graphView.addSeries(graphViewSeries);
-			graphView.setViewPort(0, WINDOW_WIDTH * sample_rate);
+			graphView.setViewPort(0, WINDOW_WIDTH);
 			graphView.setScrollable(true);
 			graphView.setScalable(true);
 			graphView.setManualYAxisBounds(5, -1);
