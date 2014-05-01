@@ -13,15 +13,15 @@ public final class Mathematics {
 	public static double log2(double x) {
 		return java.lang.Math.log10(x) / java.lang.Math.log10(2);
 	}
-	
+
 	public static double log2(int x) {
 		return (double) (java.lang.Math.log10(x) / java.lang.Math.log10(2));
 	}
-	
+
 	public static double log2(float x) {
 		return (double) (java.lang.Math.log10(x) / java.lang.Math.log10(2));
 	}
-	
+
 	public static double [] log2(double [] x) {
 		double [] returnValue = new double[x.length];
 		for(int i = 0; i < x.length; i++) {
@@ -29,7 +29,7 @@ public final class Mathematics {
 		}
 		return returnValue;
 	}
-	
+
 	public static double [] log2(float [] x) {
 		double [] returnValue = new double[x.length];
 		for(int i = 0; i < x.length; i++) {
@@ -37,7 +37,7 @@ public final class Mathematics {
 		}
 		return returnValue;
 	}
-	
+
 	public static double [] log2(int [] x) {
 		double [] returnValue = new double[x.length];
 		for(int i = 0; i < x.length; i++) {
@@ -45,7 +45,7 @@ public final class Mathematics {
 		}
 		return returnValue;
 	}
-	
+
 	public static double mean(double [] x) {
 		double xSum = 0;
 		for(int i = 0; i < x.length; i++) {
@@ -53,7 +53,7 @@ public final class Mathematics {
 		}
 		return xSum / x.length;
 	}
-	
+
 	public static double mean(float [] x) {
 		double xSum = 0;
 		for(int i = 0; i < x.length; i++) {
@@ -84,7 +84,7 @@ public final class Mathematics {
 		}
 		return returnValue;
 	}
-	
+
 	public static int [] getIncrementalArray(int start, int end, int interval) {
 		int size = (start - end) / interval;
 		int [] returnValue = new int[size];
@@ -93,7 +93,7 @@ public final class Mathematics {
 		}
 		return returnValue;
 	}
-	
+
 	public static double meanSquareError(double [] y, double [] y_fit) {
 		if(y.length != y_fit.length) {
 			// error
@@ -122,7 +122,7 @@ public final class Mathematics {
 			return Math.sqrt(sumSquareError / (double) y.length);
 		}
 	}
-	
+
 	public static int max(int [] in) {
 		int returnValue = in[0];
 		for(int i = 1; i < in.length; i++) {
@@ -132,7 +132,9 @@ public final class Mathematics {
 		}
 		return returnValue;
 	}
-	
+
+
+
 	public static double max(double [] in) {
 		double returnValue = in[0];
 		for(int i = 1; i < in.length; i++) {
@@ -142,7 +144,7 @@ public final class Mathematics {
 		}
 		return returnValue;
 	}
-	
+
 	public static int min(int [] in) {
 		int returnValue = in[0];
 		for(int i = 1; i < in.length; i++) {
@@ -152,7 +154,7 @@ public final class Mathematics {
 		}
 		return returnValue;
 	}
-	
+
 	public static double min(double [] in) {
 		double returnValue = in[0];
 		for(int i = 1; i < in.length; i++) {
@@ -161,5 +163,78 @@ public final class Mathematics {
 			}
 		}
 		return returnValue;
+	}
+
+	public static double std(int [] in) {
+		double sum = 0;
+		double squareSum = 0;
+		for(int i : in) {
+			sum += i;
+			squareSum += i * i;
+		}
+		sum /= in.length;
+		squareSum /= in.length;
+		return Math.sqrt(squareSum - Math.pow(sum, 2));
+	}
+
+
+
+	public static double std(double [] in) {
+		double sum = 0;
+		double squareSum = 0;
+		for(double i : in) {
+			sum += i;
+			squareSum += i * i;
+		}
+		sum /= in.length;
+		squareSum /= in.length;
+		return Math.sqrt(squareSum - Math.pow(sum, 2));
+	}
+
+	public static double [] derivative(double [] in) {
+		double [] out = new double [in.length];
+
+		out[0] = in[0];
+		for(int i = 1; i < in.length; i++) {
+			out[i] = in[i] - in[i - 1]; 
+		}
+		return out;
+	}
+
+	public static double [] cumsum(double [] in) {
+		double [] out = new double [in.length];
+
+		out[0] = in[0];
+		for(int i = 1; i < in.length; i++) {
+			out[i] = in[i] + out[i - 1]; 
+		}
+		return out;
+	}
+
+	public static int [] find(boolean [] metric, int num, boolean first) {
+		int [] out = new int [num];
+		int count = 0;
+		int index = first ? 0 : metric.length - 1;
+		int end = first ? metric.length :  -1;
+		int increment = first? 1 : -1;
+		while(count < num) {
+			if(metric[index]) {
+				out[count++] = index;
+			}
+			index += increment;
+			if(index == end) {
+				break;
+			}
+		}
+		if(count == num) {
+			return out;
+		}
+		else {
+			return null;
+		}
+	}
+	
+	public static int find(boolean [] metric, boolean first) {
+		return find(metric, 1, first)[0];
 	}
 }
