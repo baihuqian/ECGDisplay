@@ -10,6 +10,7 @@ import com.jjoe64.graphview.LineGraphView;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -124,6 +125,9 @@ public class BluetoothActivity extends Activity {
 				if(conn.isConnectionFailed()) {
 					mHandler.removeCallbacks(add_data);
 					updateFlag = false;
+					Toast.makeText(BluetoothActivity.this, "Cannot start Bluetooth Connection!", Toast.LENGTH_LONG).show(); 
+					Intent intent = new Intent(BluetoothActivity.this, WelcomeActivity.class);
+					BluetoothActivity.this.startActivity(intent);
 					return;
 				}
 				if(conn.isConnectionStarted()) {
