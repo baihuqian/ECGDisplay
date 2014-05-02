@@ -1,7 +1,10 @@
 package cmu.ece.BaihuQian.SensorComm;
 
-import java.util.concurrent.ArrayBlockingQueue;
-
+/**
+ * Buffer that converts and store data from sensor
+ * @author Baihu Qian
+ *
+ */
 public class BTBuffer implements SensorCommConstants{
 	private static final int BUFLEN = 50000;
 
@@ -19,15 +22,11 @@ public class BTBuffer implements SensorCommConstants{
 	protected boolean impCheckOn;
 
 	//memory buffers for data
-	//private double[] rawData; //raw data
-	//private double[] rawDataImpFil; //raw data plus notch
-	private double[] filData; //hpf for display
-	//private ArrayBlockingQueue<Double> filData;
-	private double[] last4Samples;
-	//private double[] impData;
 
-	//private int[] packetCounter;
-	//private int[] triggerData;
+	private double[] filData; //hpf for display
+
+
+
 
 	//pointers for circular buffers
 	private volatile int readIndex;
@@ -49,19 +48,12 @@ public class BTBuffer implements SensorCommConstants{
 
 	public BTBuffer() {
 		//init buffer arrays
-		//rawData = new double[BUFLEN];
-		//filData = new ArrayBlockingQueue<Double>(BUFLEN);
+
 		filData = new double[BUFLEN];
-		last4Samples = new double[4];
-		//impData = new double[BUFLEN];
-		//rawDataImpFil = new double[BUFLEN];
 
 		//inital indicies
 		readIndex = 0;
 		writeIndex = 0;
-
-		//packetCounter = new int[BUFLEN];
-		//triggerData = new int[BUFLEN];
 
 		//init device parameters
 		HPFreq = 0.5;
@@ -73,8 +65,6 @@ public class BTBuffer implements SensorCommConstants{
 
 		ADC_TO_VOLTS = (2*VREF/(4294967296.0*GAIN));
 		TO_Z = 1.4/(ISTIM*2.0);
-
-
 	}
 
 	public synchronized int numSamplesReady()
@@ -90,148 +80,62 @@ public class BTBuffer implements SensorCommConstants{
 	}
 
 
-	public synchronized void writeSamples(double newData, int pCounter, int trigger)
+	public void writeSamples(double newData)
 	{
-		/*
-        //reorder if 64 channel headset
-        if(cogCHS == 64)
-        {
-                double[] tempSample = new double[64];
-                System.arraycopy(newData, 0, tempSample, 0, cogCHS);
-
-                for(int ch=0; ch<cogCHS; ch++)
-                {
-                    newData[ch] = tempSample[remap[ch]-1];
-                }
-        }
-		 */
-
-		//write packet counter and trigger
-		//packetCounter[writeIndex] = pCounter;
-		//triggerData[writeIndex] = trigger;
-
-
-
 		//save the raw data
-		//rawData[writeIndex] = (newData*ADC_TO_VOLTS);
-		double rawData = (newData*ADC_TO_VOLTS);
-		//remove impedance stimuli
-		//push old data out and add latest data point to the 4 point buffer
-		last4Samples[0] = last4Samples[1];
-		last4Samples[1] = last4Samples[2];
-		last4Samples[2] = last4Samples[3];
-		//last4Samples[3] = rawData[writeIndex];
-		last4Samples[3] = rawData;
-		//save data with impedance stimuli gone
-		//two stage process, IIR notch at fs/4, and FIR average two point   
-		//rawDataImpFil[writeIndex] = lpf(notchf(rawData[writeIndex]));
 
-		//compute impedance and save into impedance buffer
-		double diff1, diff2;
-		diff1 = Math.abs(last4Samples[3]-last4Samples[1]);
-		diff2 = Math.abs(last4Samples[2]-last4Samples[0]);
-		if(diff2>diff1)
-		{diff1 = diff2;}
-		//impData[writeIndex] = diff1*TO_Z;
+		double rawData = (newData*ADC_TO_VOLTS);
 
 		//perform high-pass filtering
+		synchronized(this) {
 
-		filData[writeIndex] = hpf(rawData);
-		
+			filData[writeIndex] = hpf(rawData);
 
-
-		writeIndex++;
-		if(writeIndex>=BUFLEN)
-		{
-			writeIndex = 0;
+			writeIndex++;
+			if(writeIndex>=BUFLEN)
+			{
+				writeIndex = 0;
+			}
+			//Log.i("Buffer", "write index" + writeIndex);
 		}
 	}
-	
-	
-	public synchronized double readSamples() {
-		double filDataOut = filData[readIndex];
-		
-		readIndex++;
-		if(readIndex >= BUFLEN) {
-			readIndex = 0;
+
+
+	public double readSamples() {
+		synchronized(this) {
+			double filDataOut = filData[readIndex];
+
+			readIndex++;
+			if(readIndex >= BUFLEN) {
+				readIndex = 0;
+			}
+			//Log.i("Buffer", "read index" + readIndex);
+			return filDataOut;
 		}
-		return filDataOut;
 	}
-    
-    /*
-     * Reads out impedance values, averaged by the specified number of samples
-     */
-	
-    
-    /*
-     * Updates high pass filter with newSample, updates state variables and returns
-     * filtered data
-     */
-    private double hpf(double newSample)
-    {
-        //calculate coefficients
-        double delta_t = 1.0/SAMPLE_RATE; //sample interval is 1/current sample rate
-        double RC_HP = 1/(6.28*HPFreq);
-        double alpha = RC_HP/(RC_HP+delta_t);
-        
-        //perform HPF
-        double yout = alpha * (yprev_hp + (double) newSample - xprev_hp);
-        
-        //update state variables
-        xprev_hp = (double) newSample;
-        yprev_hp = yout;
-        
-        return yout;
-    }
-    
-    
-    private double notch_depth = 0.7;
-    
-    private double b0 = (1+notch_depth)/2;
-    private double b1 = 0;
-    private double b2 = (1+notch_depth)/2;
-    
-    private double a0 = 1;
-    private double a1 = 0;
-    private double a2 = notch_depth;
-    
-    
-    private double notchf(double newSample)
-    {
-        //perform notch
-        double yout = b0*newSample + b1*xp1_notch + b2*xp2_notch - a1*yp1_notch - a2*yp2_notch;
-        
-        //update state variables
-        xp2_notch = xp1_notch;
-        xp1_notch = newSample;
-        
-        
-        
-        yp2_notch = yp1_notch;
-        yp1_notch = yout;
-        
-        return yout;
-    }
-    
-    
-    //high quality LPF at Fs/2
-    private double lpf_depth = 0.6;
-    private double d0 = (1+lpf_depth)/2;
-    private double d1 = (1+lpf_depth)/2;
-    
-    private double c0 = 1;
-    private double c1 = lpf_depth;
-    
-    private double lpf(double newSample)
-    {
-        //perform lpf
-        double yout = d0*newSample + d1*xp1_lpf  - c1*yp1_lpf;
-        
-        //update state variables
-        xp1_lpf = newSample;
-       
-        yp1_lpf = yout;
-        
-        return yout;
-    }
+
+
+	/*
+	 * Updates high pass filter with newSample, updates state variables and returns
+	 * filtered data
+	 */
+	private double hpf(double newSample)
+	{
+		//calculate coefficients
+		double delta_t = 1.0/SAMPLE_RATE; //sample interval is 1/current sample rate
+		double RC_HP = 1/(6.28*HPFreq);
+		double alpha = RC_HP/(RC_HP+delta_t);
+
+		//perform HPF
+		double yout = alpha * (yprev_hp + (double) newSample - xprev_hp);
+
+		//update state variables
+		xprev_hp = (double) newSample;
+		yprev_hp = yout;
+
+		return yout;
+	}
+
+
+
 }

@@ -1,44 +1,30 @@
 package cmu.ece.BaihuQian.SensorComm;
 
+/**
+ * Connect buffer to display or post-processing
+ * @author Baihu Qian
+ *
+ */
 public class ProcessingAdapter{
 	private BTBuffer buffer;
-	//private double [] dataBuffer;
-	//private static final int DATABUFFERSIZE = 10000;
-	//private boolean needToStop;
-	//private int writeIndex, readIndex;
+
 	
 	public ProcessingAdapter(BTBuffer buffer) {
 		this.buffer = buffer;
-		//needToStop = false;
-		//dataBuffer = new double [DATABUFFERSIZE];
-		//writeIndex = 0;
-		//readIndex = 0;
 	}
-	/*
-	public void run() {
-		while(!Thread.interrupted() && !needToStop) {
-			int numSampleReady;
-			double filDataOut;
-			if((numSampleReady = buffer.numSamplesReady()) > 0) { // wait until samples are ready
-				for(int i = 0; i < numSampleReady; i++) { // read samples
-					filDataOut = buffer.readSamples();
-					dataBuffer[writeIndex++] = filDataOut;
-					if(writeIndex >= DATABUFFERSIZE) {
-						writeIndex = 0;
-					}
-				}
-			}
-			
-			
-		}
-	}
-	*/
+	/**
+	 * encapsulate buffer methods
+	 * @return
+	 */
 	public int numSamplesReady()
 	{
-		//return 1000;
 		return buffer.numSamplesReady();
 	}
 
+	/**
+	 * read as much data as possible
+	 * @return
+	 */
 	public double[] readDataBuffer() {
 		int numSamplesReady = numSamplesReady();
 		if(numSamplesReady > 0) {
@@ -53,6 +39,11 @@ public class ProcessingAdapter{
 		}
 	}
 	
+	/**
+	 * read a segment of data from buffer
+	 * @param size length of data to read
+	 * @return return an array of data if data are available, null if failed
+	 */
 	public double[] readDataBuffer(int size) {
 		int numSamplesReady = numSamplesReady();
 		if(numSamplesReady >= size) {

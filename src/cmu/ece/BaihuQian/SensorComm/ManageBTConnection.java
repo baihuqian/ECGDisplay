@@ -5,8 +5,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.bluetooth.BluetoothSocket;
+import android.util.Log;
 
-// all BT processing goes here
+/**
+ * all BT processing goes here
+ * @author Baihu Qian
+ *
+ */
 public class ManageBTConnection extends Thread {
 
 
@@ -30,7 +35,7 @@ public class ManageBTConnection extends Thread {
 		InputStream tmpIn = null;
 		OutputStream tmpOut = null;
 
-		try {
+		try { // instantiate IOStream
 			tmpIn = this.socket.getInputStream();
 			tmpOut = this.socket.getOutputStream();
 		} catch (IOException e) {
@@ -38,18 +43,26 @@ public class ManageBTConnection extends Thread {
 		}
 		inStream = tmpIn;
 		outStream = tmpOut;
-		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+		//Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 	}
 
 	public int readByte() throws IOException{
-		//byte [] buffer = new byte[1024];
-		//int bytes;
+
 		if(byteBufferIndex == numBytesToRead) {
-			int read = 0;
-			while (read < byteBuffer.length) {
-				read = inStream.read(byteBuffer, read, byteBuffer.length - read);
+			int alreadyRead = 0; // number of bytes already been read
+			int actualRead = 0; // actual number of bytes from last read
+			while (alreadyRead < byteBuffer.length) { // fill byteBuffer
+				// read data
+				actualRead = inStream.read(byteBuffer, alreadyRead, byteBuffer.length - alreadyRead);
+				
+				if(actualRead == -1) { // reach the end
+					Log.i("MBTC", "readByte failed");
+					throw new IOException();
+				}
+				alreadyRead += actualRead; // add newly read data to existing data
 			}
 			byteBufferIndex = 0;
+			//Log.i("MBTC", "readByte successful");
 		}
 		return (byteBuffer[byteBufferIndex++]&0xFF); // convert to unsigned int
 	}
@@ -61,15 +74,17 @@ public class ManageBTConnection extends Thread {
 
 	public void run() {
 		try {
+			//Log.i("MBTC", "start");
+			
 			for(int c=0; c<4096; c++) { //flush buffers
 				readByte();
 			}
-
-			while (!Thread.interrupted() && !needToClose) {
+	
+			while (true) {
 				//find sync byte
 				while (readByte() != 255) { }
 
-				int packetCount = readByte();
+				readByte(); //read packet count byte
 
 				//read data
 				int msb, lsb2, lsb1;
@@ -78,20 +93,21 @@ public class ManageBTConnection extends Thread {
 				lsb2 =readByte();
 				lsb1 = readByte();
 
-				int temp = ((msb << 24) | (lsb2 << 17) | (lsb1 << 10));
+				int temp = ((msb << 24) | (lsb2 << 17) | (lsb1 << 10)); //assemble the data
 
-				double newSamples = (double) temp;
+				double newSamples = (double) temp; // convert to double
 
 				for(int i = 0; i < 10; i++) { // ignore two other channels and 4 tail bytes (2 * 3 + 4 = 10)
 					readByte();
 				}
 				//write to buffer
-				buffer.writeSamples(newSamples, packetCount, 0);
+				buffer.writeSamples(newSamples);
+				//Log.i("MBTC", "buffer write " + newSamples);
 			} 
 		}catch(IOException e) {
-
+			//Log.i("MBTC", "interruptted");
 		}
-
+		//Log.i("MBTC", "end");
 	}
 	
 	public BTBuffer getBuffer() {
