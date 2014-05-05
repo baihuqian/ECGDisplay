@@ -24,7 +24,8 @@ public class Tester {
 		// TODO Auto-generated method stub
 		try {
 			// read file
-			double [] data = new double[5000];
+			int leng = 90600;
+			double [] data = new double[leng];
 			int [] windows = {7, 13, 19};
 			int i = 0;
 			BufferedReader br = new BufferedReader(new FileReader("data.txt"));
@@ -33,7 +34,7 @@ public class Tester {
 
 				double incoming = Double.parseDouble(line);
 				data[i++] = incoming;
-				if(i == 5000) {
+				if(i == leng) {
 					break;
 				}
 				
