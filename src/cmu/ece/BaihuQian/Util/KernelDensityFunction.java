@@ -25,7 +25,7 @@ public class KernelDensityFunction {
 		step = (maxRange - minRange) / (numPoints - 1);
 		for(int i = 0; i < numPoints; i++) {
 			densityFunction[i] = new ValuePair(minRange + step * i, 0);
-			densityFunction[i] = new ValuePair(minRange + step * i, 0);
+			cumulativeFunction[i] = new ValuePair(minRange + step * i, 0);
 		}
 
 
@@ -33,8 +33,23 @@ public class KernelDensityFunction {
 
 	public ValuePair[] getProbabilityDensityFunction() {
 		if(!isDensityCalculated) {
-			double sigma = Mathematics.std(data);
-			double h = 1.06 * sigma * Math.pow(data.length, -0.2);
+			double med = Mathematics.median(data);
+			double [] data_med = new double [data.length];
+			double h = 0;
+			for(int i = 0; i < data.length; i++) {
+				data_med[i]= data[i] - med;
+			}
+			double sigma = Mathematics.median(Mathematics.abs(data_med)) / 0.6745;
+			if(sigma <= 0) {
+				sigma = Mathematics.max(data) - Mathematics.min(data);
+			}
+			if(sigma > 0) {
+				h = sigma * Math.pow(4 / (3 * data.length), 0.2);
+			}
+			else {
+				h = 1;
+			}
+			
 
 			int range = (int) Math.ceil(step / 3);
 			for(double dataPoint : data) {
@@ -47,7 +62,7 @@ public class KernelDensityFunction {
 					rightMostIndex = numPoints - 1;
 				}
 				for(int i = leftMostIndex; i <= rightMostIndex; i++) {
-					densityFunction[i].setY(kernelFunction((densityFunction[i].getX() - dataPoint) / h));
+					densityFunction[i].setY(1.0 / ((double) data.length * h) * kernelFunction((densityFunction[i].getX() - dataPoint) / h));
 				}
 			}
 			double sum = 0;
@@ -66,7 +81,7 @@ public class KernelDensityFunction {
 		if(!isDensityCalculated) {
 			getProbabilityDensityFunction();
 		}
-		if(isCumulativeCalculated) {
+		if(!isCumulativeCalculated) {
 			cumulativeFunction[0].setY(densityFunction[0].getY());
 			for(int i = 1; i < numPoints; i++) {
 				cumulativeFunction[i].setY(densityFunction[i].getY() + cumulativeFunction[i - 1].getY());

@@ -3,6 +3,8 @@
  */
 package cmu.ece.BaihuQian.Util;
 
+import java.util.Arrays;
+
 //import java.lang.Math;
 
 /**
@@ -233,8 +235,28 @@ public final class Mathematics {
 			return null;
 		}
 	}
-	
+
 	public static int find(boolean [] metric, boolean first) {
 		return find(metric, 1, first)[0];
+	}
+
+	public static double median(double [] in) {
+		double [] data = Arrays.copyOf(in, in.length);
+		Arrays.sort(data);
+
+		if(data.length % 2 == 1) {
+			return data[(data.length - 1) / 2];
+		}
+		else {
+			return (data[data.length / 2] + data[data.length / 2 - 1]) / 2;
+		}
+	}
+
+	public static double [] abs(double [] in) {
+		double [] out = new double [in.length];
+		for(int i = 0; i < in.length; i++) {
+			out[i] = Math.abs(in[i]);
+		}
+		return out;
 	}
 }

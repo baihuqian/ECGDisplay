@@ -4,9 +4,12 @@
 package cmu.ece.BaihuQian.DFAUtil;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.io.FileWriter;
+
+import cmu.ece.BaihuQian.Util.KernelDensityFunction;
 
 /**
  * @author Baihu Qian
@@ -21,7 +24,7 @@ public class Tester {
 		// TODO Auto-generated method stub
 		try {
 			// read file
-			double [] data = new double[500];
+			double [] data = new double[5000];
 			int [] windows = {7, 13, 19};
 			int i = 0;
 			BufferedReader br = new BufferedReader(new FileReader("data.txt"));
@@ -30,11 +33,14 @@ public class Tester {
 
 				double incoming = Double.parseDouble(line);
 				data[i++] = incoming;
-
+				if(i == 5000) {
+					break;
+				}
 				
 				line = br.readLine();
 			}
 			br.close();
+			/*
 			double [] initialData = new double [20];
 			for(int j = 0; j < initialData.length; j++) {
 				initialData[j] = data[j];
@@ -46,7 +52,14 @@ public class Tester {
 			for(int k = 0; k < data.length - initialData.length; k++) {
 				mpdfa.addData(new double [] {data[k + initialData.length]});
 			}
-			
+			*/
+			KernelDensityFunction k = new KernelDensityFunction(data, 500);
+			KernelDensityFunction.ValuePair [] v = k.getProbabilityDensityFunction();
+			BufferedWriter writer = new BufferedWriter(new FileWriter(new File("output.txt")));
+			for(int j = 0; j < v.length; j++) {
+				writer.write(v[j].getX() + "\t" + v[j].getY() + "\n");
+			}
+			writer.close();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
