@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 
 public class KernelDensityFunction {
-	private static final double constant = 1.0 / Math.sqrt(2 * Math.PI);
-	private static final double kernelCut = 3.0;
+	private static final double constant = 1.0 / Math.sqrt(2 * Math.PI); // constants in standard normal distribution
+	private static final double kernelCut = 3.0; // cutoff value
 
 	private ValuePair[] densityFunction;
 	private int numPoints;
@@ -23,20 +23,12 @@ public class KernelDensityFunction {
 
 		densityFunction = new ValuePair[numPoints];
 		cumulativeFunction = new ValuePair[numPoints];
-		/*
-		minRange = Mathematics.min(data) - 3;
-		maxRange = Mathematics.max(data) + 3;
-		step = (maxRange - minRange) / (numPoints - 1);
-		for(int i = 0; i < numPoints; i++) {
-			densityFunction[i] = new ValuePair(minRange + step * i, 0);
-			cumulativeFunction[i] = new ValuePair(minRange + step * i, 0);
-		}
-	*/
-
 	}
 
 	public ValuePair[] getProbabilityDensityFunction() {
-		if(!isDensityCalculated) {
+		if(!isDensityCalculated) { // not calculated
+			// calculate bandwidth h
+			// matlab method
 			double med = Mathematics.median(data);
 			double [] data_med = new double [data.length];
 			double h = 0;
@@ -53,6 +45,8 @@ public class KernelDensityFunction {
 			else {
 				h = 1;
 			}
+			
+			// setup range of sampling points in density function
 			minRange = Mathematics.min(data) - kernelCut * h;
 			maxRange = Mathematics.max(data) + kernelCut * h;
 			
@@ -62,52 +56,29 @@ public class KernelDensityFunction {
 				cumulativeFunction[i] = new ValuePair(minRange + step * i, 0);
 			}
 			
-			/*
-			int range = (int) Math.ceil(step / 3);
-			for(double dataPoint : data) {
-				int leftMostIndex = (int) Math.floor((dataPoint - minRange) / step) - range;
-				int rightMostIndex = leftMostIndex + range * 2 + 1;
-				if(leftMostIndex < 0) {
-					leftMostIndex = 0;
-				}
-				if(rightMostIndex >= numPoints) {
-					rightMostIndex = numPoints - 1;
-				}
-				for(int i = leftMostIndex; i <= rightMostIndex; i++) {
-					densityFunction[i].setY(1.0 / ((double) data.length * h) * kernelFunction((densityFunction[i].getX() - dataPoint) / h));
-				}
-			}
-			double sum = 0;
-			for(int i = 0; i < numPoints; i++) {
-				sum += densityFunction[i].getY();
-			}
-			for(int i = 0; i < numPoints; i++) {
-				densityFunction[i].setY(densityFunction[i].getY() / sum);
-			}
 			
-			*/
-			Arrays.sort(data);
-			int jstart = 0, jend = 0;
-			double halfwidth = kernelCut * h;
+			Arrays.sort(data); // sort the data
+			int jstart = 0, jend = 0; // index to determine range of data that has an impact on sampling points
+			double halfwidth = kernelCut * h; // range
 			for(int i = 0; i < numPoints; i++) {
 				double x = densityFunction[i].getX();
 				double low = x - halfwidth;
-				while(data[jstart] < low && jstart < data.length - 1) {
+				while(data[jstart] < low && jstart < data.length - 1) { // find lower bound
 					jstart++;
 				}
 				double high = x + halfwidth;
 				jend = Math.max(jend, jstart);
-				while(data[jend] <= high && jend < data.length - 1) {
+				while(data[jend] <= high && jend < data.length - 1) { // find higher bound
 					jend++;
 				}
-				double sum = 0;
+				double sum = 0; // sum up all impacts on data
 				for(int k = jstart; k <= jend; k++) {
 					double z = (x - data[k]) / h;
 					sum += kernelFunction(z);
-					
 				}
 				densityFunction[i].setY(sum / ((double) data.length * h));
 			}
+			// normalize density function
 			double sum = 0;
 			for(int i = 0; i < numPoints; i++) {
 				sum += densityFunction[i].getY();
@@ -125,6 +96,7 @@ public class KernelDensityFunction {
 			getProbabilityDensityFunction();
 		}
 		if(!isCumulativeCalculated) {
+			// get cumulative distribution
 			cumulativeFunction[0].setY(densityFunction[0].getY());
 			for(int i = 1; i < numPoints; i++) {
 				cumulativeFunction[i].setY(densityFunction[i].getY() + cumulativeFunction[i - 1].getY());
@@ -133,8 +105,41 @@ public class KernelDensityFunction {
 		}
 		return cumulativeFunction;
 	}
+	
+	public double [] getPDFyValue() {
+		if(!isDensityCalculated) {
+			getProbabilityDensityFunction();
+		}
+		double [] returnValue = new double [densityFunction.length];
+		for(int i = 0; i < returnValue.length; i++) {
+			returnValue[i] = densityFunction[i].getY();
+		}
+		return returnValue;
+	}
+	
+	public double [] getxValue() {
+		if(!isCumulativeCalculated) {
+			getCumulativeDensityFunction();
+		}
+		double [] returnValue = new double [cumulativeFunction.length];
+		for(int i = 0; i < returnValue.length; i++) {
+			returnValue[i] = cumulativeFunction[i].getX();
+		}
+		return returnValue;
+	}
+	public double [] getCDFyValue() {
+		if(!isCumulativeCalculated) {
+			getCumulativeDensityFunction();
+		}
+		double [] returnValue = new double [cumulativeFunction.length];
+		for(int i = 0; i < returnValue.length; i++) {
+			returnValue[i] = cumulativeFunction[i].getY();
+		}
+		return returnValue;
+	}
 
 	private double kernelFunction(double in) {
+		// kernel function
 		return constant * Math.exp(-0.5 * Math.pow(in, 2));
 	}
 	public class ValuePair{

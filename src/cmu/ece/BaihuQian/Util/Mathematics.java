@@ -214,11 +214,23 @@ public final class Mathematics {
 	}
 
 	public static int [] find(boolean [] metric, int num, boolean first) {
-		int [] out = new int [num];
-		int count = 0;
+		
 		int index = first ? 0 : metric.length - 1;
 		int end = first ? metric.length :  -1;
 		int increment = first? 1 : -1;
+		if(num == -1) { // find as many as possible
+			int [] out = new int [metric.length];
+			int count = 0;
+			for(; index != end; index += increment) {
+				if(metric[index]) {
+					out[count++] = index;
+				}
+			}
+			return Arrays.copyOf(out, count);
+		}
+		else {
+			int [] out = new int [num];
+			int count = 0;
 		while(count < num) {
 			if(metric[index]) {
 				out[count++] = index;
@@ -234,10 +246,17 @@ public final class Mathematics {
 		else {
 			return null;
 		}
+		}
 	}
 
 	public static int find(boolean [] metric, boolean first) {
-		return find(metric, 1, first)[0];
+		int [] result = find(metric, 1, first);
+		if(result == null) {
+			return -1;
+		}
+		else {
+			return result[0];
+		}
 	}
 
 	public static double median(double [] in) {
@@ -256,6 +275,15 @@ public final class Mathematics {
 		double [] out = new double [in.length];
 		for(int i = 0; i < in.length; i++) {
 			out[i] = Math.abs(in[i]);
+		}
+		return out;
+	}
+	
+	public static double [] diff(double [] in) {
+		double [] out = new double [in.length];
+		out[0] = in[0];
+		for(int i = 1; i < in.length; i++) {
+			out[i] = in[i] - in[i - 1];
 		}
 		return out;
 	}

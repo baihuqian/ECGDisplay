@@ -4,19 +4,26 @@ import java.util.LinkedList;
 
 import cmu.ece.BaihuQian.Util.Mathematics;
 
-public class MPDFA {
-	private int [] windows;
-	private LinkedList<MPDFAData> dataBuffer;
+/**
+ * Calculate F value
+ * @author bqian
+ *
+ */
+public class TDFA implements TDFAConstants{
+	//private int [] windows;
+	private LinkedList<TDFAData> dataBuffer;
 	private int [] index;
 	private static int loc = 0;
-	private MPDFADetection detector;
+	private TDFADetection detector;
 	private static double offset = 0;
 	private double last = 0;
-	public MPDFA() {	}
-	public MPDFA(double [] signal, int [] windows, MPDFADetection detector) {
-		this.windows = windows;
-		this.dataBuffer = new LinkedList<MPDFAData>();
-		index = new int [windows.length];
+	private boolean isFirst;
+	public TDFA() {	}
+	public TDFA(double [] signal, TDFADetection detector) {
+		isFirst = true;
+		//this.windows = windows;
+		this.dataBuffer = new LinkedList<TDFAData>();
+		index = new int [numWindow];
 		for(int i = 0; i < index.length; i++) {
 			index[i] = 0;
 		}
@@ -24,12 +31,12 @@ public class MPDFA {
 		addData(signal);
 	}
 	
-	public void setDetector(MPDFADetection detector) {
+	public void setDetector(TDFADetection detector) {
 		this.detector = detector;
 	}
 	public void addData(double [] signal) {
 		for(int i = 0; i < signal.length; i++) {
-			MPDFAData tmpData = new MPDFAData(signal[i], i + loc);
+			TDFAData tmpData = new TDFAData(signal[i], i + loc);
 			dataBuffer.add(tmpData);
 		}
 		loc += signal.length;
@@ -37,7 +44,7 @@ public class MPDFA {
 	}
 	
 	private void processData() {
-		for(int i = 0; i < windows.length; i++) {
+		for(int i = 0; i < numWindow; i++) {
 			int startIndex = index[i];
 			// dataBuffer.size() - startIndex: length of unprocessed data
 			int numIter = (dataBuffer.size() - startIndex) / windows[i];
@@ -79,12 +86,18 @@ public class MPDFA {
 	
 	private void removeData() {
 		int minIndex = Mathematics.min(index); // index of earliest unprocessed number, aka number of data removed
-		MPDFAData [] MPDFAPayload = new MPDFAData[minIndex];
+		TDFAData [] MPDFAPayload = new TDFAData[minIndex];
 		for(int i = 0; i < minIndex; i++) {
 			MPDFAPayload[i] = dataBuffer.pop();
 		}
 		if(detector != null) {
-			detector.addData(MPDFAPayload);
+			if(isFirst) {
+				detector.initializeData(MPDFAPayload);
+				isFirst = false;
+			}
+			else {
+				detector.addData(MPDFAPayload);
+			}
 		}
 		for(int i = 0; i < index.length; i++) {
 			index[i] -= minIndex;

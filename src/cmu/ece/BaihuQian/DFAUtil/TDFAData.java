@@ -1,16 +1,16 @@
 package cmu.ece.BaihuQian.DFAUtil;
 
-public class MPDFAData {
-	public static int [] windows = {7, 13, 19};
+public class TDFAData implements TDFAConstants{
+	//public static int [] windows = {7, 13, 19};
 	private double signal;
 	private double [] F;
 	private boolean detectionResult;
 	private int index;
 	
-	public MPDFAData(double signal, int index) {
+	public TDFAData(double signal, int index) {
 		this.signal = signal;
 		this.index = index;
-		F = new double [windows.length];
+		F = new double [numWindow];
 		detectionResult = false;
 	}
 

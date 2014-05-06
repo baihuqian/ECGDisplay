@@ -17,16 +17,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import cmu.ece.BaihuQian.DFAUtil.EventDetectedInterface;
-import cmu.ece.BaihuQian.DFAUtil.MPDFA;
-import cmu.ece.BaihuQian.DFAUtil.MPDFADetection;
+import cmu.ece.BaihuQian.DFAUtil.TDFA;
+import cmu.ece.BaihuQian.DFAUtil.TDFADetection;
 
 public class MPDFADemoActivity extends Activity {
 	
 	private final Handler mHandler = new Handler();
 	private Runnable addData;
 	private double [] data;
-	private MPDFADetection detector;
-	private MPDFA mpdfa;
+	private TDFADetection detector;
+	private TDFA mpdfa;
 	private int index;
 	private final int [] windows = {7, 13, 19};
 	private static int start_size = 1;
@@ -76,8 +76,8 @@ public class MPDFADemoActivity extends Activity {
 		}
 		index = start_size;
 		
-		detector = new MPDFADetection(windows.length);
-		mpdfa = new MPDFA(initialData, windows, detector);
+		detector = new TDFADetection();
+		mpdfa = new TDFA(initialData, detector);
 		
 	}
 
