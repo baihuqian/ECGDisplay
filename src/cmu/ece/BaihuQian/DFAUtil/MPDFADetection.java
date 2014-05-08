@@ -22,10 +22,14 @@ public class MPDFADetection {
 	
 	public void addData(MPDFAData [] data){
 		dataBuffer = data;
+		EventDetectedInterface.eventFlag = false;
 		processData();
 	}
 	
 	private void processData(){
+		EventDetectedInterface.size = 0;
+		EventDetectedInterface.eventData = new MPDFAData[dataBuffer.length];
+		int k = 0;
 		for(int i = 0; i < dataBuffer.length; i++) {
 			double count = 0;
 			for(int j = 0; j < numWindow; j++) {
@@ -42,9 +46,10 @@ public class MPDFADetection {
 					) {
 				dataBuffer[i].eventDetected();
 				EventDetectedInterface.eventFlag = true;
-				EventDetectedInterface.eventData = dataBuffer[i];
+				EventDetectedInterface.eventData[k++] = dataBuffer[i];
 			}
-			EventDetectedInterface.data = dataBuffer[i];
+			
 		}
+		EventDetectedInterface.size = k;
 	}
 }

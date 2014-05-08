@@ -13,7 +13,7 @@ public class MPDFA {
 	private static double offset = 0;
 	private double last = 0;
 	public MPDFA() {	}
-	public MPDFA(double [] signal, int [] windows, MPDFADetection detector) {
+	public MPDFA(double [] signal, int [] idx, int [] windows, MPDFADetection detector) {
 		this.windows = windows;
 		this.dataBuffer = new LinkedList<MPDFAData>();
 		index = new int [windows.length];
@@ -21,15 +21,15 @@ public class MPDFA {
 			index[i] = 0;
 		}
 		setDetector(detector);
-		addData(signal);
+		addData(signal, idx);
 	}
 	
 	public void setDetector(MPDFADetection detector) {
 		this.detector = detector;
 	}
-	public void addData(double [] signal) {
+	public void addData(double [] signal, int [] idx) {
 		for(int i = 0; i < signal.length; i++) {
-			MPDFAData tmpData = new MPDFAData(signal[i], i + loc);
+			MPDFAData tmpData = new MPDFAData(signal[i], idx[i]);
 			dataBuffer.add(tmpData);
 		}
 		loc += signal.length;
