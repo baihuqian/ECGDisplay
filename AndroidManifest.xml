@@ -59,7 +59,8 @@
 
         <activity
             android:name="cmu.ece.BaihuQian.ECGDisplayUI.TDFADemoActivity"
-            android:label="@string/title_activity_tdfademo" >
+            android:label="@string/title_activity_tdfademo"
+            android:screenOrientation="landscape" >
         </activity>
     </application>
 

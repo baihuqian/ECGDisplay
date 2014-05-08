@@ -22,7 +22,7 @@ public class MPDFADetection {
 	
 	public void addData(MPDFAData [] data){
 		dataBuffer = data;
-		EventDetectedInterface.eventFlag = false;
+		
 		processData();
 	}
 	
@@ -44,6 +44,7 @@ public class MPDFADetection {
 			if(count >= votingThreshold * numWindow && 
 					(dataBuffer[i].getSignal() < lowRRThreshold || dataBuffer[i].getSignal() > highRRThreshold)
 					) {
+			
 				dataBuffer[i].eventDetected();
 				EventDetectedInterface.eventFlag = true;
 				EventDetectedInterface.eventData[k++] = dataBuffer[i];

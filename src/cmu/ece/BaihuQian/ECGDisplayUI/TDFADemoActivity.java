@@ -40,7 +40,7 @@ public class TDFADemoActivity extends Activity {
 	private MPDFADetection detector;
 	private MPDFA mpdfa;
 	private int index;
-	private final int [] windows = {7, 13, 19};
+	private final int [] windows = {5, 7, 13, 19};
 	private static int start_size = 200;
 	private int dataLength = 200;
 	@Override

@@ -1,7 +1,7 @@
 package cmu.ece.BaihuQian.DFAUtil;
 
 public class MPDFAData {
-	public static int [] windows = {7, 13, 19};
+	public static int [] windows = {5, 7, 13, 19};
 	private double signal;
 	private double [] F;
 	private boolean detectionResult;

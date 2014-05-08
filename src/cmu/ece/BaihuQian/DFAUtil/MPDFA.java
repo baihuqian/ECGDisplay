@@ -28,6 +28,7 @@ public class MPDFA {
 		this.detector = detector;
 	}
 	public void addData(double [] signal, int [] idx) {
+		EventDetectedInterface.eventFlag = false;
 		for(int i = 0; i < signal.length; i++) {
 			MPDFAData tmpData = new MPDFAData(signal[i], idx[i]);
 			dataBuffer.add(tmpData);
