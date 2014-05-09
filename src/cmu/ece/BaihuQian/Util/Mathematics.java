@@ -135,13 +135,35 @@ public final class Mathematics {
 		return returnValue;
 	}
 
-
+	public static int maxIndex(int [] in) {
+		int returnValue = 0;
+		int maxValue = in[0];
+		for(int i = 1; i < in.length; i++) {
+			if(in[i] > maxValue) {
+				maxValue = in[i];
+				returnValue = i;
+			}
+		}
+		return returnValue;
+	}
 
 	public static double max(double [] in) {
 		double returnValue = in[0];
 		for(int i = 1; i < in.length; i++) {
 			if(in[i] > returnValue) {
 				returnValue = in[i];
+			}
+		}
+		return returnValue;
+	}
+	
+	public static int maxIndex(double [] in) {
+		int returnValue = 0;
+		double maxValue = in[0];
+		for(int i = 1; i < in.length; i++) {
+			if(in[i] > maxValue) {
+				maxValue = in[i];
+				returnValue = i;
 			}
 		}
 		return returnValue;
@@ -226,7 +248,12 @@ public final class Mathematics {
 					out[count++] = index;
 				}
 			}
-			return Arrays.copyOf(out, count);
+			if(count > 0) {
+				return Arrays.copyOf(out, count);
+			}
+			else {
+				return null;
+			}
 		}
 		else {
 			int [] out = new int [num];
@@ -279,11 +306,11 @@ public final class Mathematics {
 		return out;
 	}
 	
-	public static double [] diff(double [] in) {
-		double [] out = new double [in.length];
-		out[0] = in[0];
-		for(int i = 1; i < in.length; i++) {
-			out[i] = in[i] - in[i - 1];
+	public static double [] diff(double [] inY, double [] inX) {
+		double [] out = new double [inY.length];
+		out[0] = inY[0] / (inX[1] - inX[0]);
+		for(int i = 1; i < inY.length; i++) {
+			out[i] = (inY[i] - inY[i - 1]) / (inX[i] - inX[i - 1]);
 		}
 		return out;
 	}
