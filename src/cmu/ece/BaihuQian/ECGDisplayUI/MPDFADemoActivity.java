@@ -29,7 +29,7 @@ public class MPDFADemoActivity extends Activity {
 	private TDFA mpdfa;
 	private int index;
 	private final int [] windows = {7, 13, 19};
-	private static int start_size = 1;
+	private static int start_size = 2000;
 	private int countDown = 0;
 	private int eventCount = 0;
 	private final ToneGenerator tg = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100);
@@ -53,7 +53,7 @@ public class MPDFADemoActivity extends Activity {
 		
 		textViewEvent.setText(Integer.toString(eventCount));
 		
-		data = new double[500];
+		data = new double[90600];
 		
 		
 		File sdcard = Environment.getExternalStorageDirectory();
@@ -76,8 +76,13 @@ public class MPDFADemoActivity extends Activity {
 		}
 		index = start_size;
 		
+<<<<<<< HEAD
 		detector = new TDFADetection();
 		mpdfa = new TDFA(initialData, detector);
+=======
+		detector = new MPDFADetection(windows.length);
+		//mpdfa = new MPDFA(initialData, windows, detector);
+>>>>>>> demo_version
 		
 	}
 
@@ -87,7 +92,7 @@ public class MPDFADemoActivity extends Activity {
 		super.onPause();
 		mHandler.removeCallbacks(addData);
 	}
-
+/*
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
@@ -134,7 +139,7 @@ public class MPDFADemoActivity extends Activity {
 			mHandler.removeCallbacks(addData);
 		}
 	}
-
+*/
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 

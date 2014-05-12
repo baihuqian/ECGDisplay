@@ -17,6 +17,7 @@ public class TDFA implements TDFAConstants{
 	private TDFADetection detector;
 	private static double offset = 0;
 	private double last = 0;
+<<<<<<< HEAD:src/cmu/ece/BaihuQian/DFAUtil/TDFA.java
 	private boolean isFirst;
 	public TDFA() {	}
 	public TDFA(double [] signal, TDFADetection detector) {
@@ -24,19 +25,31 @@ public class TDFA implements TDFAConstants{
 		//this.windows = windows;
 		this.dataBuffer = new LinkedList<TDFAData>();
 		index = new int [numWindow];
+=======
+	public MPDFA() {	}
+	public MPDFA(double [] signal, int [] idx, int [] windows, MPDFADetection detector) {
+		this.windows = windows;
+		this.dataBuffer = new LinkedList<MPDFAData>();
+		index = new int [windows.length];
+>>>>>>> demo_version:src/cmu/ece/BaihuQian/DFAUtil/MPDFA.java
 		for(int i = 0; i < index.length; i++) {
 			index[i] = 0;
 		}
 		setDetector(detector);
-		addData(signal);
+		addData(signal, idx);
 	}
 	
 	public void setDetector(TDFADetection detector) {
 		this.detector = detector;
 	}
-	public void addData(double [] signal) {
+	public void addData(double [] signal, int [] idx) {
+		EventDetectedInterface.eventFlag = false;
 		for(int i = 0; i < signal.length; i++) {
+<<<<<<< HEAD:src/cmu/ece/BaihuQian/DFAUtil/TDFA.java
 			TDFAData tmpData = new TDFAData(signal[i], i + loc);
+=======
+			MPDFAData tmpData = new MPDFAData(signal[i], idx[i]);
+>>>>>>> demo_version:src/cmu/ece/BaihuQian/DFAUtil/MPDFA.java
 			dataBuffer.add(tmpData);
 		}
 		loc += signal.length;

@@ -273,15 +273,27 @@ containing a value of this type.
         public static final int activity_bluetooth=0x7f030000;
         public static final int activity_display_sdfile=0x7f030001;
         public static final int activity_mpdfademo=0x7f030002;
+<<<<<<< HEAD
         public static final int activity_user_behavior=0x7f030003;
         public static final int activity_welcome=0x7f030004;
+=======
+        public static final int activity_tdfademo=0x7f030003;
+        public static final int activity_user_behavior=0x7f030004;
+        public static final int activity_welcome=0x7f030005;
+>>>>>>> demo_version
     }
     public static final class menu {
         public static final int bluetooth=0x7f0a0000;
         public static final int display=0x7f0a0001;
         public static final int mpdfademo=0x7f0a0002;
+<<<<<<< HEAD
         public static final int user_behavior=0x7f0a0003;
         public static final int welcome=0x7f0a0004;
+=======
+        public static final int tdfademo=0x7f0a0003;
+        public static final int user_behavior=0x7f0a0004;
+        public static final int welcome=0x7f0a0005;
+>>>>>>> demo_version
     }
     public static final class string {
         public static final int action_settings=0x7f06001c;
@@ -390,6 +402,10 @@ containing a value of this type.
         public static final int title_activity_bluetooth=0x7f060021;
         public static final int title_activity_display_sd_file=0x7f06001e;
         public static final int title_activity_mpdfademo=0x7f060023;
+<<<<<<< HEAD
+=======
+        public static final int title_activity_tdfademo=0x7f060026;
+>>>>>>> demo_version
         public static final int title_activity_user_behavior=0x7f060025;
         public static final int title_activity_welcome=0x7f06001d;
     }

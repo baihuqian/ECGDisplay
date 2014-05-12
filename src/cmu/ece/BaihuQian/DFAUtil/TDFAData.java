@@ -1,7 +1,12 @@
 package cmu.ece.BaihuQian.DFAUtil;
 
+<<<<<<< HEAD:src/cmu/ece/BaihuQian/DFAUtil/TDFAData.java
 public class TDFAData implements TDFAConstants{
 	//public static int [] windows = {7, 13, 19};
+=======
+public class MPDFAData {
+	public static int [] windows = {5, 7, 13, 19};
+>>>>>>> demo_version:src/cmu/ece/BaihuQian/DFAUtil/MPDFAData.java
 	private double signal;
 	private double [] F;
 	private boolean detectionResult;

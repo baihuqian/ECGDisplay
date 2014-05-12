@@ -21,6 +21,7 @@ public class Tester {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		/*
 		// TODO Auto-generated method stub
 		try {
 			// read file
@@ -64,6 +65,7 @@ public class Tester {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 
 }
