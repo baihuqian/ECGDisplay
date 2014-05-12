@@ -76,13 +76,10 @@ public class MPDFADemoActivity extends Activity {
 		}
 		index = start_size;
 		
-<<<<<<< HEAD
-		detector = new TDFADetection();
-		mpdfa = new TDFA(initialData, detector);
-=======
-		detector = new MPDFADetection(windows.length);
-		//mpdfa = new MPDFA(initialData, windows, detector);
->>>>>>> demo_version
+
+		//detector = new TDFADetection();
+		//mpdfa = new TDFA(initialData, detector);
+
 		
 	}
 

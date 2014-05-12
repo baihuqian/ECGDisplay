@@ -22,7 +22,6 @@ public class UpdateThreshold implements Runnable {
 		threshold = new double [numScale];
 		this.cutoff = cutoff;
 		isThresholdReady = false;
-
 	}
 
 	public synchronized double getLowRRThreshold() {

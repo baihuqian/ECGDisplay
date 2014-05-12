@@ -5,30 +5,23 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
-import cmu.ece.BaihuQian.DFAUtil.EventDetectedInterface;
-import cmu.ece.BaihuQian.DFAUtil.MPDFA;
-import cmu.ece.BaihuQian.DFAUtil.MPDFAData;
-import cmu.ece.BaihuQian.DFAUtil.MPDFADetection;
-
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
-import com.jjoe64.graphview.GraphView.GraphViewData;
-
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.os.Build;
+import cmu.ece.BaihuQian.DFAUtil.EventDetectedInterface;
+import cmu.ece.BaihuQian.DFAUtil.TDFA;
+import cmu.ece.BaihuQian.DFAUtil.TDFAData;
+import cmu.ece.BaihuQian.DFAUtil.TDFADetection;
+
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphView.GraphViewData;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
 
 public class TDFADemoActivity extends Activity {
 	private GraphViewSeries intervalSeries, resultSeries;
@@ -37,8 +30,8 @@ public class TDFADemoActivity extends Activity {
 	private final Handler mHandler = new Handler();
 	private Runnable addData;
 	private double [] data;
-	private MPDFADetection detector;
-	private MPDFA mpdfa;
+	private TDFADetection detector;
+	private TDFA mpdfa;
 	private int index;
 	private final int [] windows = {5, 7, 13, 19};
 	private static int start_size = 200;
@@ -74,8 +67,8 @@ public class TDFADemoActivity extends Activity {
 		}
 		index = start_size;
 
-		detector = new MPDFADetection(windows.length);
-		mpdfa = new MPDFA(initialData, initialIndex, windows, detector);
+		detector = new TDFADetection();
+		mpdfa = new TDFA(initialData, initialIndex, detector);
 
 		intervalData = new GraphViewData[dataLength];
 		for(int i = 0; i < intervalData.length; i++) {
@@ -126,7 +119,7 @@ public class TDFADemoActivity extends Activity {
 				newResultData[dataLength - 1] = new GraphViewData(index, 0);
 				if(EventDetectedInterface.eventFlag) {
 					int size = EventDetectedInterface.size;
-					MPDFAData [] eventData = EventDetectedInterface.eventData;
+					TDFAData [] eventData = EventDetectedInterface.eventData;
 					int start = index - dataLength;
 					for(int j = 0; j < size; j++) {
 						int idx = eventData[j].getIndex() - start;

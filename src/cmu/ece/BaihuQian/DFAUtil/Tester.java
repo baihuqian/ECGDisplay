@@ -55,6 +55,7 @@ public class Tester {
 				mpdfa.addData(new double [] {data[k + initialData.length]});
 			}
 			*/
+		/*
 			KernelDensityFunction k = new KernelDensityFunction(data, 500);
 			KernelDensityFunction.ValuePair [] v = k.getProbabilityDensityFunction();
 			BufferedWriter writer = new BufferedWriter(new FileWriter(new File("output.txt")));
